@@ -1,14 +1,17 @@
+import Logger from './Logger'
 import { jsControllerCodes, microphoneStatuses } from './constants'
 
 export default class MeetingController {
   meetingStartedInterval: any;
   participants: any;
+  _logger: Logger;
 
   constructor() {
     this.participants = {}
+    this._logger = new Logger("MeetingController");
     this.meetingStartedInterval = setInterval(function (self) {
       if (self.isMeetingStarted()) {
-        console.log("Meeting started.")
+        self._logger.log("Meeting started.")
         self.meetingStarted()
 
         clearInterval(self.meetingStartedInterval);
@@ -18,7 +21,7 @@ export default class MeetingController {
 
   isMeetingStarted(): boolean {
     const participantsNodes = this.getParticipantsNodes();
-    console.log("[isMeetingStarted] participantsNodes", participantsNodes)
+    this._logger.log("participantsNodes", participantsNodes)
     return participantsNodes != null && participantsNodes.length > 0;
   }
 
@@ -30,26 +33,27 @@ export default class MeetingController {
     return document.querySelector(`div[jscontroller="${jsControllerCodes.participantsContainerBox}"]`)
   }
 
-  getParticipantInitialId (node) {
-      if (node == null) return null;
-      return node.getAttribute("data-initial-participant-id");
+  getParticipantInitialId(node) {
+    if (node == null) return null;
+    return node.getAttribute("data-initial-participant-id");
   }
 
-  isParticipantSpeaking (microphoneNode) {
+  isParticipantSpeaking(microphoneNode) {
     const nodeClass = microphoneNode.className;
     const isSilence = nodeClass.includes(microphoneStatuses.silence)
-    console.log(`[isParticipantSpeaking] isSilence='${isSilence}' nodeClass=${nodeClass}`, microphoneNode)
+    this._logger.log(`isSilence='${isSilence}' nodeClass=${nodeClass}`, microphoneNode)
     return !isSilence;
-}
+  }
 
-getMicrophoneNode (participantNode) {
-  return participantNode.querySelector(`div[jscontroller="${jsControllerCodes.microphoneBox}"]`)
-}
+  getMicrophoneNode(participantNode) {
+    return participantNode.querySelector(`div[jscontroller="${jsControllerCodes.microphoneBox}"]`)
+  }
 
   meetingStarted() {
     // observe for participants changes
+    const self = this;
     const participantsBoxObserver = new MutationObserver(function () {
-      console.log('callback that runs when observer is triggered');
+      self._logger.log('callback that runs when observer is triggered');
     });
     const participantsContainerNode = this.getParticipantsContainerBoxNode();
     participantsBoxObserver.observe(participantsContainerNode, { subtree: true, childList: true })
@@ -62,18 +66,18 @@ getMicrophoneNode (participantNode) {
   }
 
   trackParticipant(node) {
-    console.log('[trackParticipant] started tracking node: ', node);
+    this._logger.log('started tracking node: ', node);
 
     const participantId = this.getParticipantInitialId(node);
-    console.log(`[trackParticipant] participantInitialId is '${participantId}'`)
+    this._logger.log(` participantInitialId is '${participantId}'`)
 
     this.addParticipant(participantId);
 
     const participantMicrophoneBox = this.getMicrophoneNode(node)
-    console.log(`[trackParticipant] participantMicrophoneBox is`, participantMicrophoneBox)
+    this._logger.log(`participantMicrophoneBox is`, participantMicrophoneBox)
 
     const self = this;
-    const participantMicrophoneBoxObserver = new MutationObserver(function (mutations) {
+    const participantMicrophoneBoxObserver = new MutationObserver(function trackParticipantCheckChanges (mutations) {
       const isSpeaking = self.isParticipantSpeaking(participantMicrophoneBox);
       if (isSpeaking) {
         // check if he keeps speaking or just started
@@ -88,41 +92,41 @@ getMicrophoneNode (participantNode) {
       } else {
         self.stopSpeaking(participantId)
       }
-      console.log(`[trackParticipant][observer][${participantId}] class has changed.`, isSpeaking, mutations);
+      self._logger.log(`[observer][${participantId}] class has changed.`, isSpeaking, mutations);
     });
 
     participantMicrophoneBoxObserver.observe(participantMicrophoneBox, { attributes: true, attributeOldValue: true })
   }
 
-  addParticipant (initialId) {
+  addParticipant(initialId) {
     if (!this.participants[initialId]) {
-        this.participants[initialId] = {
-            events: [
-                ["JOINED", new Date().getTime()]
-            ],
-            lastStartSpeaking: null,
-            totalSpeakingTime: 0
-        }
+      this.participants[initialId] = {
+        events: [
+          ["JOINED", new Date().getTime()]
+        ],
+        lastStartSpeaking: null,
+        totalSpeakingTime: 0
+      }
     }
-}
-
-startSpeaking (initialId) {
-  const now = new Date().getTime();
-  console.log(`[startSpeaking][${initialId}][${now}]`)
-  // participants[initialId].events.push(["START_SPEAKING", now])
-  this.participants[initialId].lastStartSpeaking = now;
-}
-
-stopSpeaking (initialId) {
-  const now = new Date().getTime();
-  console.log(`[stopSpeaking][${initialId}][${now}]`)
-  // participants[initialId].events.push(["STOP_SPEAKING", now])
-  if (this.participants[initialId].lastStartSpeaking){
-      const speakingTime = now - this.participants[initialId].lastStartSpeaking;
-      console.log(`[stopSpeaking] speakingTime is '${speakingTime}'`)
-      console.log(`[stopSpeaking] previous totalSpeakingTime was '${this.participants[initialId].totalSpeakingTime}'`)
-      this.participants[initialId].totalSpeakingTime = this.participants[initialId].totalSpeakingTime + speakingTime 
-      this.participants[initialId].lastStartSpeaking = null;
   }
-}
+
+  startSpeaking(initialId) {
+    const now = new Date().getTime();
+    this._logger.log(`[startSpeaking][${initialId}][${now}]`)
+    // participants[initialId].events.push(["START_SPEAKING", now])
+    this.participants[initialId].lastStartSpeaking = now;
+  }
+
+  stopSpeaking(initialId) {
+    const now = new Date().getTime();
+    this._logger.log(`[${initialId}][${now}]`)
+    // participants[initialId].events.push(["STOP_SPEAKING", now])
+    if (this.participants[initialId].lastStartSpeaking) {
+      const speakingTime = now - this.participants[initialId].lastStartSpeaking;
+      this._logger.log(`speakingTime is '${speakingTime}'`)
+      this._logger.log(`previous totalSpeakingTime was '${this.participants[initialId].totalSpeakingTime}'`)
+      this.participants[initialId].totalSpeakingTime = this.participants[initialId].totalSpeakingTime + speakingTime
+      this.participants[initialId].lastStartSpeaking = null;
+    }
+  }
 }

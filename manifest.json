@@ -1,0 +1,13 @@
+{
+  "name": "Google meet talk time recorder",
+  "version": "1.0",
+  "description": "Google meet talk time recorder!",
+  "manifest_version": 2,
+  "content_scripts": [{
+    "matches": [
+      "https://meet.google.com/*"
+    ],
+    "run_at": "document_start",
+    "js": ["contentscript.js"]
+  }]
+}

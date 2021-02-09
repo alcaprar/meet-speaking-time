@@ -1,3 +1,5 @@
+import { type } from "os";
+
 export default class Logger {
 
   logPrefix : string;
@@ -30,6 +32,9 @@ export default class Logger {
     if (this.logPrefix) newArgs.unshift(`[${this.logPrefix}]`);
         
     // 3. Pass along arguments to console.log
-    console.log.apply(console, newArgs);
+    const debugVar = "debugTalkTimeExt";
+    if (typeof window[debugVar] === "undefined" || (typeof window[debugVar] !== "undefined" && typeof window[debugVar])) {
+      console.log.apply(console, newArgs);
+    }
   }
 }

@@ -4,6 +4,7 @@ import { Participant } from './Participant'
 
 export default class MeetingController {
   meetingStartedInterval: any;
+  startedAt: number;
   _logger: Logger;
   participants: {
     [id: string]: Participant
@@ -45,6 +46,9 @@ export default class MeetingController {
 
 
   meetingStarted() {
+    this.startedAt = new Date().getTime();
+
+    // observe for new participants
     this.startParticipantsChangeObserver()
 
     // start tracking participants already present
@@ -66,11 +70,17 @@ export default class MeetingController {
   startParticipantsChangeObserver () {
     // observe for participants changes
     const self = this;
-    const participantsBoxObserver = new MutationObserver(function () {
-      self._logger.log('callback that runs when observer is triggered');
+    const participantsBoxObserver = new MutationObserver(function newParticipantObserver (mutations) {
+      self._logger.log('New participant box(es)', mutations);
+      mutations.forEach(function newParticipantObserverMutationsHandler (mut) {
+        const addedNodes = mut.addedNodes;
+        addedNodes.forEach(function newParticipantObserverMutationsHandlerNodeHandler (node) {
+          self.createParticipant(node)
+        })
+      })
     });
     const participantsContainerNode = this.getParticipantsContainerBoxNode();
-    participantsBoxObserver.observe(participantsContainerNode, { subtree: true, childList: true })
+    participantsBoxObserver.observe(participantsContainerNode, { childList: true })
   }
 
   createParticipant (node) {

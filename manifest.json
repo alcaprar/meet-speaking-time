@@ -3,11 +3,17 @@
   "version": "1.0",
   "description": "Google meet talk time recorder!",
   "manifest_version": 2,
+  "permissions": [
+    "storage"
+  ],
   "content_scripts": [{
     "matches": [
       "https://meet.google.com/*"
     ],
     "run_at": "document_start",
     "js": ["contentscript.js"]
-  }]
+  }],
+  "browser_action": {
+    "default_popup": "assets/popup.html"
+  }
 }

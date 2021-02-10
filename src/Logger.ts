@@ -1,5 +1,3 @@
-import { type } from "os";
-
 export default class Logger {
 
   logPrefix : string;

@@ -1,10 +1,11 @@
 import { jsControllerCodes, microphoneStatuses} from './constants'
 import Logger from './Logger'
 import { ParticipantEvent, ParticipantEventEnum} from "./ParticipantEvent";
+import { ParticipantNode } from './ParticipantNode'
 
 export class Participant {
   initialId: string;
-  node: Element;
+  node: ParticipantNode;
   microphoneObserver: MutationObserver;
   name: string;
   events: ParticipantEvent[] = [];
@@ -14,10 +15,10 @@ export class Participant {
 
   constructor (initialId: string, node: Element) {
     this.initialId = initialId;
-    this.node = node;
+    this.node = new ParticipantNode(initialId);
     this.events.push(new ParticipantEvent(ParticipantEventEnum.JOINED));
     this._logger = new Logger(`Participant|${initialId}`);
-    this.name = this.getNameNode().innerHTML || "";
+    this.name = this.node.getName() || "";
   }
 
   startTracking () {
@@ -52,21 +53,13 @@ export class Participant {
   }
 
   updateNameBox () {
-    const nameElement = this.getNameNode();
+    const nameElement = this.node.getNameElement();
     this._logger.log(nameElement);
     nameElement.innerHTML = `${this.name} (${this.totalSpeakingTime})`; 
   }
 
-  getMicrophoneNode() : Element {
-    return this.node.querySelector(`div[jscontroller="${jsControllerCodes.microphoneBox}"]`)
-  }
-
-  getNameNode() : Element {
-    return this.node.querySelector(`div[jscontroller="${jsControllerCodes.participantNameBox}"]`)
-  }
-
   isParticipantSpeaking () : boolean {
-    const nodeClass = this.getMicrophoneNode().className;
+    const nodeClass = this.node.getMicrophoneElement().className;
     const isSilence = nodeClass.includes(microphoneStatuses.silence)
     this._logger.log(`isSilence='${isSilence}' nodeClass=${nodeClass}`)
     return !isSilence;
@@ -92,6 +85,6 @@ export class Participant {
       self._logger.log(`[observer][${self.initialId}] class has changed.`, isSpeaking, mutations);
     });
 
-    this.microphoneObserver.observe(this.getMicrophoneNode(), { attributes: true, attributeOldValue: true })
+    this.microphoneObserver.observe(this.node.getMicrophoneElement(), { attributes: true, attributeOldValue: true })
   }
 }

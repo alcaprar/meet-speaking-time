@@ -14,6 +14,6 @@
     "js": ["contentscript.js"]
   }],
   "browser_action": {
-    "default_popup": "assets/popup.html"
+    "default_popup": "popup.html"
   }
 }

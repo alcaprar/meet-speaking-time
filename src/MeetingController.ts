@@ -1,10 +1,12 @@
 import Logger from './Logger'
 import { jsControllerCodes, microphoneStatuses } from './constants'
 import { Participant } from './Participant'
+import { formatTime } from './Utils'
 
 export default class MeetingController {
   meetingStartedInterval: any;
   startedAt: number;
+  meetingId: string;
   _logger: Logger;
   participants: {
     [id: string]: Participant
@@ -14,9 +16,9 @@ export default class MeetingController {
     this.participants = {}
     this._logger = new Logger("MeetingController");
 
-    this.meetingStartedInterval = setInterval(function (self : MeetingController) {
+    this.meetingStartedInterval = setInterval(function (self: MeetingController) {
       self._logger.log(`Meeting started: ${self.isMeetingStarted()}`)
-      
+
       if (self.isMeetingStarted()) {
         self._logger.log("Meeting started.")
         self.meetingStarted()
@@ -31,15 +33,21 @@ export default class MeetingController {
     return participantsNodes != null && participantsNodes.length > 0;
   }
 
-  getParticipantsNodes() : NodeListOf<Element> {
+  getMeetingId(): string {
+    const pathname: string = window.location.pathname || "";
+    // removes the '/' or any additional query params
+    return pathname.replace('/', '').slice(0, pathname.includes('?') ? pathname.indexOf('?') : pathname.length);
+  }
+
+  getParticipantsNodes(): NodeListOf<Element> {
     return document.querySelectorAll(`div[jscontroller="${jsControllerCodes.participantBox}"]`);
   }
 
-  getParticipantsContainerBoxNode() : Element {
+  getParticipantsContainerBoxNode(): Element {
     return document.querySelector(`div[jscontroller="${jsControllerCodes.participantsContainerBox}"]`)
   }
 
-  getParticipantInitialId (node) : string {
+  getParticipantInitialId(node): string {
     if (node == null) return null;
     return node.getAttribute("data-initial-participant-id");
   }
@@ -47,6 +55,7 @@ export default class MeetingController {
 
   meetingStarted() {
     this.startedAt = new Date().getTime();
+    this.meetingId = this.getMeetingId();
 
     // observe for new participants
     this.startParticipantsChangeObserver()
@@ -61,20 +70,35 @@ export default class MeetingController {
     this.startSummaryLogger();
   }
 
-  startSummaryLogger () {
-    setInterval(function (self : MeetingController) {
-      console.log(self.participants)
+  startSummaryLogger() {
+    setInterval(function (self: MeetingController) {
+      const meetingKey = `${self.meetingId}|${self.startedAt}`;
+
+      const readableParticipants = [];
+      Object.keys(self.participants).forEach((key) => {
+        const singleParticipant : Participant = self.participants[key];
+        readableParticipants.push([
+          singleParticipant.name,
+          formatTime(singleParticipant.totalSpeakingTime)
+        ])
+      })
+      const message = {
+        startedAt: self.startedAt,
+        participants: readableParticipants
+      };
+      chrome.storage.sync.set(message);
+      self._logger.log(message)
     }, 1000, this)
   }
 
-  startParticipantsChangeObserver () {
+  startParticipantsChangeObserver() {
     // observe for participants changes
     const self = this;
-    const participantsBoxObserver = new MutationObserver(function newParticipantObserver (mutations) {
+    const participantsBoxObserver = new MutationObserver(function newParticipantObserver(mutations) {
       self._logger.log('New participant box(es)', mutations);
-      mutations.forEach(function newParticipantObserverMutationsHandler (mut) {
+      mutations.forEach(function newParticipantObserverMutationsHandler(mut) {
         const addedNodes = mut.addedNodes;
-        addedNodes.forEach(function newParticipantObserverMutationsHandlerNodeHandler (node) {
+        addedNodes.forEach(function newParticipantObserverMutationsHandlerNodeHandler(node) {
           self.createParticipant(node)
         })
       })
@@ -83,7 +107,7 @@ export default class MeetingController {
     participantsBoxObserver.observe(participantsContainerNode, { childList: true })
   }
 
-  createParticipant (node) {
+  createParticipant(node) {
     const participantId = this.getParticipantInitialId(node);
     this._logger.log(`initialId is '${participantId}'`)
 

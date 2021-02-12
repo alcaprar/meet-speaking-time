@@ -26,7 +26,7 @@ export class ParticipantNode {
   }
 
   getName () : string {
-    return this.getNameElement().innerHTML;
+    return this.getNameElement() ? this.getNameElement().innerHTML : "";
   }
   
 }

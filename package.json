@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "clean": "rm -rf dist && cpy manifest.json dist && cpy src/assets/* dist/assets",
+    "clean": "rm -rf dist && cpy manifest.json dist && cpy src/popup.html dist && cpy src/assets/* dist/assets",
     "prebuild": "npm run clean",
     "prewatch": "npm run clean",
     "build:contentscript-background": "NODE_ENV=production webpack --config webpack.config.js",
@@ -13,19 +13,20 @@
     "watch": "yarn clean && npm-run-all --parallel watch:*"
   },
   "devDependencies": {
-    "cpy-cli": "^3.1.1",
-    "npm-run-all": "^4.1.5",
     "@types/chrome": "^0.0.129",
     "@types/node": "^14.14.25",
     "awesome-typescript-loader": "^5.2.1",
+    "cpy-cli": "^3.1.1",
     "css-loader": "^5.0.2",
     "mini-css-extract-plugin": "^1.3.6",
     "node-sass": "^5.0.0",
+    "npm-run-all": "^4.1.5",
     "sass-loader": "^11.0.1",
     "ts-node": "^9.1.1",
     "tslint": "^6.1.3",
     "typescript": "^4.1.3",
     "webpack": "^5.21.2",
     "webpack-cli": "^4.5.0"
-  }
+  },
+  "dependencies": {}
 }

@@ -24,7 +24,7 @@ export default class MeetingController {
         self.meetingStarted()
 
         self.updateMeetingDurationTime();
-        
+
         clearInterval(self.meetingStartedInterval);
       }
     }, 1000, this)
@@ -88,13 +88,20 @@ export default class MeetingController {
 
       participantsKeys.forEach((key) => {
         const singleParticipant : Participant = self.participants[key];
-        const percentageOfSpeaking = `${((singleParticipant.getTotalSpeakingTime() / speakingTimeOfAllParticipants)*100).toFixed(2)}%`;
+        const floatSpeaking = ((singleParticipant.getTotalSpeakingTime() / speakingTimeOfAllParticipants) * 100) || 0
+        const percentageOfSpeaking = `${floatSpeaking.toFixed(2)}%`;
 
         // add current speaking time next to participant's name
         const participantsInformation = document.querySelectorAll(`div[jscontroller="${jsControllerCodes.participantInformationBar}"]`);
         for (const participant of participantsInformation as any) {
           if (participant.innerHTML.includes(singleParticipant.name)) {
-            participant.innerHTML = `${singleParticipant.name} (${formatTime(singleParticipant.getTotalSpeakingTime(), false)} - ${percentageOfSpeaking})`;
+            let alertMessage = ''
+            if (floatSpeaking >= 90) {
+              alertMessage = ' - You\'re dominating the conversation.'
+            } else if (floatSpeaking <= 5) {
+              alertMessage = ' - You are not participating in the conversation.'
+            }
+            participant.innerHTML = `${singleParticipant.name} (${formatTime(singleParticipant.getTotalSpeakingTime(), false)} - ${percentageOfSpeaking})${alertMessage}`;
           }
         }
 
@@ -105,7 +112,7 @@ export default class MeetingController {
           percentageOfSpeaking
         ])
       })
-      
+
       // send data to chrome.storage
       const message = {
         meetingId: self.meetingId,

@@ -94,8 +94,7 @@ export default class MeetingController {
         const participantsInformation = document.querySelectorAll(`div[jscontroller="${jsControllerCodes.participantInformationBar}"]`);
         for (const participant of participantsInformation as any) {
           if (participant.innerHTML.includes(singleParticipant.name)) {
-            participant.innerHTML = `${singleParticipant.name} (${formatTime(singleParticipant.getTotalSpeakingTime(), false)})`;
-            break;
+            participant.innerHTML = `${singleParticipant.name} (${formatTime(singleParticipant.getTotalSpeakingTime(), false)} - ${percentageOfSpeaking})`;
           }
         }
 

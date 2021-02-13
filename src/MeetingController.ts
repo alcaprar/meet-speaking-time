@@ -23,6 +23,8 @@ export default class MeetingController {
         self._logger.log("Meeting started.")
         self.meetingStarted()
 
+        document.querySelector(`div[jscontroller="${jsControllerCodes.timeMeetingBox}"]`).innerHTML = '00:00:00';
+
         clearInterval(self.meetingStartedInterval);
       }
     }, 1000, this)
@@ -71,12 +73,22 @@ export default class MeetingController {
   }
 
   startSummaryLogger() {
+    let seconds = 1000
     setInterval(function (self: MeetingController) {
       const meetingKey = `${self.meetingId}|${self.startedAt}`;
 
       const readableParticipants = [];
       Object.keys(self.participants).forEach((key) => {
         const singleParticipant : Participant = self.participants[key];
+
+        const participantsInformation = document.querySelectorAll(`div[jscontroller="${jsControllerCodes.participantInformationBar}"]`);
+        for (const participant of participantsInformation as any) {
+          const splitName = participant.innerHTML.split(' (')[0]
+          if (participant.innerHTML.includes(singleParticipant.name)) {
+            participant.innerHTML = splitName + ` (${formatTime(singleParticipant.totalSpeakingTime, false)})`;
+          }
+        }
+
         readableParticipants.push([
           singleParticipant.name,
           formatTime(singleParticipant.totalSpeakingTime)
@@ -86,6 +98,10 @@ export default class MeetingController {
         startedAt: self.startedAt,
         participants: readableParticipants
       };
+
+      document.querySelector(`div[jscontroller="${jsControllerCodes.timeMeetingBox}"]`).innerHTML = formatTime(seconds, false);
+      seconds += 1000;
+
       chrome.storage.sync.set(message);
       self._logger.log(message)
     }, 1000, this)

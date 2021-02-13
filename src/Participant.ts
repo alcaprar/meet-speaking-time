@@ -1,4 +1,4 @@
-import { jsControllerCodes, microphoneStatuses} from './constants'
+import { microphoneStatuses} from './constants'
 import Logger from './Logger'
 import { ParticipantEvent, ParticipantEventEnum} from "./ParticipantEvent";
 import { ParticipantNode } from './ParticipantNode'
@@ -13,7 +13,7 @@ export class Participant {
   totalSpeakingTime: number = 0;
   _logger: Logger;
 
-  constructor (initialId: string, node: Element) {
+  constructor (initialId: string) {
     this.initialId = initialId;
     this.node = new ParticipantNode(initialId);
     this.events.push(new ParticipantEvent(ParticipantEventEnum.JOINED));

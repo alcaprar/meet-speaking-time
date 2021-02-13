@@ -25,6 +25,17 @@ export class Participant {
     this._logger.log("Started tracking.")
   }
 
+  getTotalSpeakingTime () {
+    // if he is not speaking, return the already calculated time
+    if (!this.lastStartSpeaking) {
+      return this.totalSpeakingTime;
+    }
+
+    // calculate the "live" speaking time
+    const liveSpeakingTime = new Date().getTime() - this.lastStartSpeaking;
+    return this.totalSpeakingTime + liveSpeakingTime;
+  }
+
   startSpeaking () {
     this.events.push(new ParticipantEvent(ParticipantEventEnum.START_SPEAKING))
     const now = new Date().getTime();

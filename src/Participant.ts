@@ -60,7 +60,7 @@ export class Participant {
     this.lastStartSpeaking = null;
     this.totalSpeakingTime = this.totalSpeakingTime + value;
     this._logger.log(`current totalSpeakingTime '${this.totalSpeakingTime}'`)
-    this.updateNameBox();
+    //this.updateNameBox();
   }
 
   updateNameBox () {

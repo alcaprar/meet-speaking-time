@@ -23,8 +23,8 @@ export default class MeetingController {
         self._logger.log("Meeting started.")
         self.meetingStarted()
 
-        document.querySelector(`div[jscontroller="${jsControllerCodes.timeMeetingBox}"]`).innerHTML = '00:00:00';
-
+        self.updateMeetingDurationTime();
+        
         clearInterval(self.meetingStartedInterval);
       }
     }, 1000, this)
@@ -73,7 +73,6 @@ export default class MeetingController {
   }
 
   startSummaryLogger() {
-    let seconds = 1000
     setInterval(function (self: MeetingController) {
       const meetingKey = `${self.meetingId}|${self.startedAt}`;
 
@@ -99,8 +98,7 @@ export default class MeetingController {
         participants: readableParticipants
       };
 
-      document.querySelector(`div[jscontroller="${jsControllerCodes.timeMeetingBox}"]`).innerHTML = formatTime(seconds, false);
-      seconds += 1000;
+      self.updateMeetingDurationTime();
 
       chrome.storage.sync.set(message);
       self._logger.log(message)
@@ -134,5 +132,10 @@ export default class MeetingController {
     }
 
     part.startMicrophoneObserver()
+  }
+
+  updateMeetingDurationTime () {
+    const elapsedMilliseconds = new Date().getTime() - this.startedAt;
+    document.querySelector(`div[jscontroller="${jsControllerCodes.timeMeetingBox}"]`).innerHTML = `${formatTime(elapsedMilliseconds, false)}`;
   }
 }

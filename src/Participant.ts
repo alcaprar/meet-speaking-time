@@ -1,4 +1,4 @@
-import { jsControllerCodes, microphoneStatuses} from './constants'
+import { microphoneStatuses} from './constants'
 import Logger from './Logger'
 import { ParticipantEvent, ParticipantEventEnum} from "./ParticipantEvent";
 import { ParticipantNode } from './ParticipantNode'
@@ -13,7 +13,7 @@ export class Participant {
   totalSpeakingTime: number = 0;
   _logger: Logger;
 
-  constructor (initialId: string, node: Element) {
+  constructor (initialId: string) {
     this.initialId = initialId;
     this.node = new ParticipantNode(initialId);
     this.events.push(new ParticipantEvent(ParticipantEventEnum.JOINED));
@@ -23,6 +23,17 @@ export class Participant {
 
   startTracking () {
     this._logger.log("Started tracking.")
+  }
+
+  getTotalSpeakingTime () {
+    // if he is not speaking, return the already calculated time
+    if (!this.lastStartSpeaking) {
+      return this.totalSpeakingTime;
+    }
+
+    // calculate the "live" speaking time
+    const liveSpeakingTime = new Date().getTime() - this.lastStartSpeaking;
+    return this.totalSpeakingTime + liveSpeakingTime;
   }
 
   startSpeaking () {
@@ -49,7 +60,7 @@ export class Participant {
     this.lastStartSpeaking = null;
     this.totalSpeakingTime = this.totalSpeakingTime + value;
     this._logger.log(`current totalSpeakingTime '${this.totalSpeakingTime}'`)
-    this.updateNameBox();
+    //this.updateNameBox();
   }
 
   updateNameBox () {

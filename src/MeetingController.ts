@@ -3,6 +3,9 @@ import { jsControllerCodes, microphoneStatuses } from './constants'
 import { Participant } from './Participant'
 import { formatTime } from './Utils'
 
+/**
+ * Main object of the extension.
+ */
 export default class MeetingController {
   meetingStartedInterval: any;
   startedAt: number;
@@ -17,7 +20,7 @@ export default class MeetingController {
     this._logger = new Logger("MeetingController");
 
     this.meetingStartedInterval = setInterval(function (self: MeetingController) {
-      self._logger.log(`Meeting started: ${self.isMeetingStarted()}`)
+      self._logger.log(`Is meeting started: ${self.isMeetingStarted()}`)
 
       if (self.isMeetingStarted()) {
         self._logger.log("Meeting started.")
@@ -30,31 +33,59 @@ export default class MeetingController {
     }, 1000, this)
   }
 
+  /**
+   * Checks whether the meeting is started or not.
+   * Meeting started = there is at least one participant box in the window.
+   * There might be better ways to do this.
+   * @returns true if it has started.
+   */
   isMeetingStarted(): boolean {
     const participantsNodes = this.getParticipantsNodes();
     return participantsNodes != null && participantsNodes.length > 0;
   }
 
+  /**
+   * Returns the meeting id taken from the url.
+   * @returns Meeting id.
+   */
   getMeetingId(): string {
     const pathname: string = window.location.pathname || "";
     // removes the '/' or any additional query params
     return pathname.replace('/', '').slice(0, pathname.includes('?') ? pathname.indexOf('?') : pathname.length);
   }
 
+  /**
+   * Returns the list of participants boxes in the window.
+   * Please note, these can may be less than the people in the meeting since only the visible ones are captured.
+   */
   getParticipantsNodes(): NodeListOf<Element> {
     return document.querySelectorAll(`div[jscontroller="${jsControllerCodes.participantBox}"]`);
   }
 
+  /**
+   * Returns the main box of the meeting that contains all the participants.
+   */
   getParticipantsContainerBoxNode(): Element {
     return document.querySelector(`div[jscontroller="${jsControllerCodes.participantsContainerBox}"]`)
   }
 
-  getParticipantInitialId(node): string {
+  /**
+   * Returns the initial id. Property called: "data-initial-participant-id".
+   * @param node The participant DOM Element
+   * @returns data-initial-participant-id
+   */
+  getParticipantInitialId(node : Element): string {
     if (node == null) return null;
     return node.getAttribute("data-initial-participant-id");
   }
 
 
+  /**
+   * Called when the meeting has started.
+   * 1. starts the observer for each participant already in the call.
+   * 2. starts the observer for new participants.
+   * 3. starts an interval that every second updates the UI with the data calculated.
+   */
   meetingStarted() {
     this.startedAt = new Date().getTime();
     this.meetingId = this.getMeetingId();
@@ -133,19 +164,27 @@ export default class MeetingController {
     participantsBoxObserver.observe(participantsContainerNode, { childList: true })
   }
 
+  /**
+   * Create a Participant object and adds it to the global list.
+   * It then starts the microphone observer that tracks the speaking.
+   * @param node 
+   */
   createParticipant(node) {
     const participantId = this.getParticipantInitialId(node);
     this._logger.log(`initialId is '${participantId}'`)
 
     let part = this.participants[participantId]
     if (!part) {
+      // if the user did not exist, create the participant and start the observer
       part = new Participant(participantId);
       this.participants[participantId] = part;
+      part.startMicrophoneObserver()
     }
-
-    part.startMicrophoneObserver()
   }
 
+  /**
+   * Updates the "clock" box with the meeting duration time.
+   */
   updateMeetingDurationTime () {
     const elapsedMilliseconds = new Date().getTime() - this.startedAt;
     document.querySelector(`div[jscontroller="${jsControllerCodes.timeMeetingBox}"]`).innerHTML = `${formatTime(elapsedMilliseconds, false)}`;

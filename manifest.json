@@ -1,7 +1,7 @@
 {
-  "name": "Google meet talk time recorder",
-  "version": "1.0",
-  "description": "Google meet talk time recorder!",
+  "name": "Google meet participants speaking time tracker.",
+  "version": "0.0.1",
+  "description": "Tracks people speaking time in order to make the meeting more inclusive.",
   "manifest_version": 2,
   "permissions": [
     "storage"

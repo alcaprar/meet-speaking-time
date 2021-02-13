@@ -21,11 +21,12 @@ export class Participant {
     this.name = this.node.getName() || "";
   }
 
-  startTracking () {
-    this._logger.log("Started tracking.")
-  }
-
-  getTotalSpeakingTime () {
+  /**
+   * Returns the current total speaking time of the participant.
+   * Please note that this might be more than totalSpeakingTime if the user is currenly speaking.
+   * @returns total speaking time.
+   */
+  getTotalSpeakingTime (): number {
     // if he is not speaking, return the already calculated time
     if (!this.lastStartSpeaking) {
       return this.totalSpeakingTime;
@@ -36,6 +37,7 @@ export class Participant {
     return this.totalSpeakingTime + liveSpeakingTime;
   }
 
+
   startSpeaking () {
     this.events.push(new ParticipantEvent(ParticipantEventEnum.START_SPEAKING))
     const now = new Date().getTime();
@@ -43,6 +45,9 @@ export class Participant {
     this.lastStartSpeaking = now;
   }
 
+  /**
+   * Calculate the speaking time since he/she has last started and adds it to the toal.
+   */
   stopSpeaking () {
     this.events.push(new ParticipantEvent(ParticipantEventEnum.STOP_SPEAKING))
     const now = new Date().getTime();
@@ -60,15 +65,11 @@ export class Participant {
     this.lastStartSpeaking = null;
     this.totalSpeakingTime = this.totalSpeakingTime + value;
     this._logger.log(`current totalSpeakingTime '${this.totalSpeakingTime}'`)
-    //this.updateNameBox();
   }
 
-  updateNameBox () {
-    const nameElement = this.node.getNameElement();
-    this._logger.log(nameElement);
-    nameElement.innerHTML = `${this.name} (${this.totalSpeakingTime})`; 
-  }
-
+  /**
+   * Checks if the participant is currently speaking looking at the CSS classes of the wave.
+   */
   isParticipantSpeaking () : boolean {
     const nodeClass = this.node.getMicrophoneElement().className;
     const isSilence = nodeClass.includes(microphoneStatuses.silence)

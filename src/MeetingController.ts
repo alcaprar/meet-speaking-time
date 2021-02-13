@@ -74,32 +74,33 @@ export default class MeetingController {
 
   startSummaryLogger() {
     setInterval(function (self: MeetingController) {
-      const meetingKey = `${self.meetingId}|${self.startedAt}`;
+      self.updateMeetingDurationTime();
 
       const readableParticipants = [];
       Object.keys(self.participants).forEach((key) => {
         const singleParticipant : Participant = self.participants[key];
 
+        // add current speaking time next to participant's name
         const participantsInformation = document.querySelectorAll(`div[jscontroller="${jsControllerCodes.participantInformationBar}"]`);
         for (const participant of participantsInformation as any) {
-          const splitName = participant.innerHTML.split(' (')[0]
           if (participant.innerHTML.includes(singleParticipant.name)) {
-            participant.innerHTML = splitName + ` (${formatTime(singleParticipant.totalSpeakingTime, false)})`;
+            participant.innerHTML = `${singleParticipant.name} (${formatTime(singleParticipant.getTotalSpeakingTime(), false)})`;
+            break;
           }
         }
 
+        // prepare data to be sent to chrome.storage
         readableParticipants.push([
           singleParticipant.name,
-          formatTime(singleParticipant.totalSpeakingTime)
+          formatTime(singleParticipant.getTotalSpeakingTime())
         ])
       })
+      
+      // send data to chrome.storage
       const message = {
         startedAt: self.startedAt,
         participants: readableParticipants
       };
-
-      self.updateMeetingDurationTime();
-
       chrome.storage.sync.set(message);
       self._logger.log(message)
     }, 1000, this)

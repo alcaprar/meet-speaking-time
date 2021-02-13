@@ -17,22 +17,23 @@ export default class Logger {
         return '';
       }
     }
-  
   }
 
   log (...args) {
-    // 1. Convert args to a normal array
-    const newArgs = Array.from(args);
+    if (process.env.NODE_ENV !== "production"){ 
+      // 1. Convert args to a normal array
+      const newArgs = Array.from(args);
 
-    const callerName = this.callerName();
-    if (callerName) newArgs.unshift(`[${callerName}]`)
-        
-    if (this.logPrefix) newArgs.unshift(`[${this.logPrefix}]`);
-        
-    // 3. Pass along arguments to console.log
-    const debugVar = "debugTalkTimeExt";
-    if (typeof window[debugVar] === "undefined" || (typeof window[debugVar] !== "undefined" && typeof window[debugVar])) {
-      console.log.apply(console, newArgs);
+      const callerName = this.callerName();
+      if (callerName) newArgs.unshift(`[${callerName}]`)
+          
+      if (this.logPrefix) newArgs.unshift(`[${this.logPrefix}]`);
+          
+      // 3. Pass along arguments to console.log
+      const debugVar = "debugTalkTimeExt";
+      if (typeof window[debugVar] === "undefined" || (typeof window[debugVar] !== "undefined" && typeof window[debugVar])) {
+        console.log.apply(console, newArgs);
+      }
     }
   }
 }

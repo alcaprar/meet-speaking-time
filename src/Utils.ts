@@ -1,3 +1,8 @@
+/**
+ * Formats the given milliseconds into a string of this format: "HH:MM:SS:MSS".
+ * @param ms 
+ * @param showMilliseconds 
+ */
 export function formatTime (ms : number, showMilliseconds : boolean = true) : string {
   const milliseconds = ms % 1000;
   const seconds = Math.floor((ms / 1000) % 60)

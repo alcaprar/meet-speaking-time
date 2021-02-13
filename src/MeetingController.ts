@@ -75,14 +75,26 @@ export default class MeetingController {
       const meetingKey = `${self.meetingId}|${self.startedAt}`;
 
       const readableParticipants = [];
-      Object.keys(self.participants).forEach((key) => {
+
+      const participantsKeys = Object.keys(self.participants);
+      let speakingTimeOfAllParticipants = 0;
+      participantsKeys.forEach((key) => {
         const singleParticipant : Participant = self.participants[key];
+        speakingTimeOfAllParticipants = speakingTimeOfAllParticipants + singleParticipant.totalSpeakingTime;
+      })
+
+      participantsKeys.forEach((key) => {
+        const singleParticipant : Participant = self.participants[key];
+        let percentageOfSpeaking = (singleParticipant.totalSpeakingTime / speakingTimeOfAllParticipants)*100;
+        
         readableParticipants.push([
           singleParticipant.name,
-          formatTime(singleParticipant.totalSpeakingTime)
+          formatTime(singleParticipant.totalSpeakingTime),
+          `${(percentageOfSpeaking).toFixed(2)}%`
         ])
       })
       const message = {
+        meetingId: self.meetingId,
         startedAt: self.startedAt,
         participants: readableParticipants
       };
@@ -113,7 +125,7 @@ export default class MeetingController {
 
     let part = this.participants[participantId]
     if (!part) {
-      part = new Participant(participantId, node);
+      part = new Participant(participantId);
       this.participants[participantId] = part;
     }
 

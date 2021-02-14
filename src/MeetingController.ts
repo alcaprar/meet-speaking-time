@@ -133,7 +133,8 @@ export default class MeetingController {
         readableParticipants.push([
           singleParticipant.name,
           formatTime(singleParticipant.getTotalSpeakingTime(), false),
-          percentageOfSpeaking
+          percentageOfSpeaking,
+          singleParticipant.profileImageUrl
         ])
       })
       

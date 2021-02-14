@@ -1,5 +1,3 @@
-import {formatTime} from "../Utils";
-
 chrome.storage.sync.get(["participants"], function(items){
   document.querySelector("#table").innerHTML = formatParticipants(items.participants)
 });
@@ -10,7 +8,7 @@ chrome.storage.sync.get(["elapsedTime"], function(items){
 
 function makeTableHTML(ar) {
   return `${ar.reduce((c, o) => c += `<div class="bg-white p-2 flex items-center rounded mt-1 border-b border-grey cursor-pointer hover:bg-gray-100">
-                                        <img src="https://i.imgur.com/OZaT7jl.png" class="rounded-full mr-2" />
+                                        <img src="${o[3]}" class="rounded-full mr-2" width="24px" heigth="24px" />
                                         <div class="flex flex-col w-full">
                                           <span>${o[0]}</span>
                                           <div class="flex items-center justify-between">

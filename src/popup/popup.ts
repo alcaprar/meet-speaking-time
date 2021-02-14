@@ -1,6 +1,9 @@
+import {formatTime} from "../Utils";
+
 chrome.storage.sync.get(["participants"], function(items){
   console.log(items)
   document.querySelector("#table").innerHTML = formatParticipants(items.participants)
+  document.querySelector("#totalTime").innerHTML = items.elapsedTime;
 });
 
 function makeTableHTML(ar) {

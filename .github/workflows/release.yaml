@@ -21,3 +21,13 @@ jobs:
       with:
         files: dist/
         dest: dist.zip
+    - name: Publish to chrome store
+      uses: trmcnvn/chrome-addon@v2
+      with:
+        # extension is only necessary when updating an existing addon,
+        # omitting it will create a new addon
+        extension: hlndmhnhnmebmbjeidanifddoopokkgl
+        zip: dist.zip
+        client-id: ${{ secrets.CHROME_CLIENT_ID }}
+        client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}
+        refresh-token: ${{ secrets.CHROME_REFRESH_TOKEN }}

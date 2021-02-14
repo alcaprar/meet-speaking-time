@@ -132,7 +132,7 @@ export default class MeetingController {
         // prepare data to be sent to chrome.storage
         readableParticipants.push([
           singleParticipant.name,
-          formatTime(singleParticipant.getTotalSpeakingTime()),
+          formatTime(singleParticipant.getTotalSpeakingTime(), false),
           percentageOfSpeaking
         ])
       })

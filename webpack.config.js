@@ -2,6 +2,7 @@ const { CheckerPlugin } = require('awesome-typescript-loader');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { optimize } = require('webpack');
 const { join } = require('path');
+
 module.exports = {
   mode: process.env.NODE_ENV,
   devtool: 'inline-source-map',

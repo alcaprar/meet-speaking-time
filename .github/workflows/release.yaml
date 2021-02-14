@@ -1,5 +1,8 @@
 name: Build and release to chrome store
-on: [push]
+on:
+  push:
+    tags: v[1-9]+.[0-9]+.[0-9]+
+    branches: master
 
 jobs:
   build:

@@ -1,10 +1,12 @@
-chrome.storage.sync.get(["participants"], function(items){
-  document.querySelector("#table").innerHTML = formatParticipants(items.participants)
-});
-
-chrome.storage.sync.get(["elapsedTime"], function(items){
-  document.querySelector("#totalTime").innerHTML = items.elapsedTime;
-})
+setInterval(function (){
+  chrome.storage.sync.get(["participants"], function(items){
+    document.querySelector("#table").innerHTML = formatParticipants(items.participants)
+  });
+  
+  chrome.storage.sync.get(["elapsedTime"], function(items){
+    document.querySelector("#totalTime").innerHTML = items.elapsedTime;
+  })
+}, 1000)
 
 function makeTableHTML(ar) {
   return `${ar.reduce((c, o) => c += `<div class="bg-white p-2 flex items-center rounded mt-1 border-b border-grey cursor-pointer hover:bg-gray-100">

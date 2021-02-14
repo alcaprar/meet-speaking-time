@@ -1,10 +1,12 @@
 import {formatTime} from "../Utils";
 
 chrome.storage.sync.get(["participants"], function(items){
-  console.log(items)
   document.querySelector("#table").innerHTML = formatParticipants(items.participants)
-  document.querySelector("#totalTime").innerHTML = items.elapsedTime;
 });
+
+chrome.storage.sync.get(["elapsedTime"], function(items){
+  document.querySelector("#totalTime").innerHTML = items.elapsedTime;
+})
 
 function makeTableHTML(ar) {
   return `${ar.reduce((c, o) => c += `<div class="bg-white p-2 flex items-center rounded mt-1 border-b border-grey cursor-pointer hover:bg-gray-100">

@@ -6,6 +6,7 @@ export enum jsControllerCodes {
   timeMeetingBox = "ymEVmc",
   participantInformationBar = "GQnsGd",
   userInformation = "gjpsNc",
+  imageProfile = "PcYCFc"
 };
 
 export enum microphoneStatuses {

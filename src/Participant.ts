@@ -8,6 +8,7 @@ export class Participant {
   node: ParticipantNode;
   microphoneObserver: MutationObserver;
   name: string;
+  profileImageUrl: string;
   events: ParticipantEvent[] = [];
   lastStartSpeaking: number = null;
   totalSpeakingTime: number = 0;
@@ -19,6 +20,7 @@ export class Participant {
     this.events.push(new ParticipantEvent(ParticipantEventEnum.JOINED));
     this._logger = new Logger(`Participant|${initialId}`);
     this.name = this.node.getName() || "";
+    this.profileImageUrl = this.node.getImageProfileSrc() || "";
   }
 
   /**

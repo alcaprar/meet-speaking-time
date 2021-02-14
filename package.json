@@ -1,16 +1,18 @@
 {
   "name": "meet-speaking-time-tracker",
-  "version": "1.0.0",
+  "version": "0.2.2",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "clean": "rm -rf dist && cpy manifest.json dist && cpy src/popup.html dist && cpy src/assets/* dist/assets",
+    "fix-manifest-dist-version": "node sedManifestVersion.js",
+    "clean": "rm -rf dist && cpy manifest.json dist && yarn fix-manifest-dist-version && cpy src/popup.html dist && cpy src/assets/* dist/assets",
     "prebuild": "npm run clean",
     "prewatch": "npm run clean",
     "build:contentscript-background": "NODE_ENV=production webpack --config webpack.config.js",
     "build": "yarn build:contentscript-background",
     "watch:contentscript-background": "NODE_ENV=development webpack --config webpack.config.js -w",
-    "watch": "yarn clean && npm-run-all --parallel watch:*"
+    "watch": "npm-run-all --parallel watch:*",
+    "postversion": "git push && git push --tags"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.129",

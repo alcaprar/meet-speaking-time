@@ -1,0 +1,34 @@
+name: Build and release to chrome store
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: 14
+    - name: Install dependencies
+      run: yarn install
+    - name: Build package
+      run: yarn build
+    - name: Create zip file
+      uses: papeloto/action-zip@v1
+      with:
+        files: dist/
+        dest: dist.zip
+    - name: Publish to chrome store
+      uses: trmcnvn/chrome-addon@v2
+      with:
+        # extension is only necessary when updating an existing addon,
+        # omitting it will create a new addon
+        extension: hlndmhnhnmebmbjeidanifddoopokkgl
+        zip: dist.zip
+        client-id: ${{ secrets.CHROME_CLIENT_ID }}
+        client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}
+        refresh-token: ${{ secrets.CHROME_REFRESH_TOKEN }}

@@ -2,7 +2,7 @@ name: Build and release to chrome store
 on:
   push:
     tags:
-      - *
+      - "v*.*.*"
 
 jobs:
   build:

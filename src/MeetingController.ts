@@ -141,6 +141,7 @@ export default class MeetingController {
       const message = {
         meetingId: self.meetingId,
         startedAt: self.startedAt,
+        elapsedTime: formatTime(self.getTotalElapsedTime(), false),
         participants: readableParticipants
       };
       chrome.storage.sync.set(message);
@@ -183,10 +184,17 @@ export default class MeetingController {
   }
 
   /**
+   * Returns the number of milliseconds since the beginning of the meeting.
+   */
+  getTotalElapsedTime () : number{
+    return new Date().getTime() - this.startedAt;
+  }
+
+  /**
    * Updates the "clock" box with the meeting duration time.
    */
   updateMeetingDurationTime () {
-    const elapsedMilliseconds = new Date().getTime() - this.startedAt;
+    const elapsedMilliseconds = this.getTotalElapsedTime();
     document.querySelector(`div[jscontroller="${jsControllerCodes.timeMeetingBox}"]`).innerHTML = `${formatTime(elapsedMilliseconds, false)}`;
   }
 }

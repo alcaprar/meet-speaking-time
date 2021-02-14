@@ -1,6 +1,6 @@
 {
-  "name": "Google meet participants speaking time tracker.",
-  "version": "0.0.1",
+  "name": "G-meet speaking time tracker.",
+  "version": "${version}",
   "description": "Tracks people speaking time in order to make the meeting more inclusive.",
   "manifest_version": 2,
   "permissions": [

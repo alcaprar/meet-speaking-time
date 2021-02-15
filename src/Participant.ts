@@ -102,5 +102,6 @@ export class Participant {
 
   stopObservers () {
     this.microphoneObserver.disconnect();
+    this.stopSpeaking();
   }
 }

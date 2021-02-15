@@ -14,6 +14,7 @@ export default class MeetingController {
   participants: {
     [id: string]: Participant
   };
+  participantsArray: Participant[]
 
   constructor() {
     this.participants = {}
@@ -156,14 +157,57 @@ export default class MeetingController {
     const participantsBoxObserver = new MutationObserver(function newParticipantObserver(mutations) {
       self._logger.log('New participant box(es)', mutations);
       mutations.forEach(function newParticipantObserverMutationsHandler(mut) {
-        const addedNodes = mut.addedNodes;
-        addedNodes.forEach(function newParticipantObserverMutationsHandlerNodeHandler(node) {
+        
+        mut.addedNodes.forEach(function newParticipantObserverMutationsHandlerNodeHandler(node) {
           self.createParticipant(node)
+        })
+
+        mut.removedNodes.forEach(function participantNodeRemovedHandler (node) {
+          self.participantNodeRemoved(node);
         })
       })
     });
     const participantsContainerNode = this.getParticipantsContainerBoxNode();
     participantsBoxObserver.observe(participantsContainerNode, { childList: true })
+  }
+
+  participantNodeAdded (node) {
+    if (this.isPresentationNode(node)) return;
+
+    const initialId = this.getParticipantInitialId(node);
+
+    if (initialId) {
+      let participant = this.getParticipantByInitialId(initialId);
+      
+      if (!participant) {
+        participant = new Participant(initialId);
+        this.participantsArray.push(participant);
+      }
+
+      participant.startObservers()
+    }
+  }
+
+  participantNodeRemoved (node) {
+    if (this.isPresentationNode(node)) return;
+
+    const initialId = this.getParticipantInitialId(node);
+
+    if (initialId) {
+      const participant = this.getParticipantByInitialId(initialId);
+      participant.stopObservers();
+    }
+  }
+
+  isPresentationNode (node) {
+    // TODO to be implemented
+    return false;
+  }
+
+  getParticipantByInitialId (initialId : string) : Participant {
+    return this.participantsArray.find((item) => {
+      return item.getIdentifier() == initialId;
+    })
   }
 
   /**

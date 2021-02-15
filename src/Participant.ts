@@ -23,6 +23,10 @@ export class Participant {
     this.profileImageUrl = this.node.getImageProfileSrc() || "";
   }
 
+  getIdentifier () : string {
+    return this.initialId;
+  }
+
   /**
    * Returns the current total speaking time of the participant.
    * Please note that this might be more than totalSpeakingTime if the user is currenly speaking.
@@ -89,8 +93,7 @@ export class Participant {
           return mut.oldValue.includes(microphoneStatuses.silence);
         })
 
-        if (wasSilenceBefore) {
-          // he just started speaking
+        if (wasSilenceBefore || !self.lastStartSpeaking) {
           self.startSpeaking()
         }
       } else {
@@ -100,5 +103,13 @@ export class Participant {
     });
 
     this.microphoneObserver.observe(this.node.getMicrophoneElement(), { attributes: true, attributeOldValue: true })
+  }
+
+  startObservers () {
+    throw new Error("Not implemented");
+  }
+
+  stopObservers () {
+    throw new Error("Not implemented");
   }
 }

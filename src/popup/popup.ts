@@ -1,11 +1,18 @@
-setInterval(function (){
-  chrome.storage.sync.get(["participants"], function(items){
-    document.querySelector("#table").innerHTML = formatParticipants(items.participants)
-  });
-  
-  chrome.storage.sync.get(["elapsedTime"], function(items){
-    document.querySelector("#totalTime").innerHTML = items.elapsedTime;
+import { formatTime} from "../Utils"
+import {MeetingInformation, Storage} from '../Storage'
+const storage = new Storage();
+
+const updateView = function () {
+  storage.getCurrent(function (currentMeeting : MeetingInformation) {
+    document.querySelector("#table").innerHTML = formatParticipants(currentMeeting.participants)
+    document.querySelector("#totalTime").innerHTML = formatTime(currentMeeting.elapsed, false);
   })
+
+  // TODO there should be also the history object
+}
+
+setInterval(function (){
+  updateView();
 }, 1000)
 
 function makeTableHTML(ar) {

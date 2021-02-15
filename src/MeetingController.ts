@@ -2,6 +2,7 @@ import Logger from './Logger'
 import { jsControllerCodes, microphoneStatuses } from './constants'
 import { Participant } from './Participant'
 import { formatTime } from './Utils'
+import { MeetingInformation, Storage } from "./Storage"
 
 /**
  * Main object of the extension.
@@ -11,11 +12,13 @@ export default class MeetingController {
   startedAt: number;
   meetingId: string;
   _logger: Logger;
+  _storage: Storage;
   participants: Participant[]
 
   constructor() {
     this.participants = []
     this._logger = new Logger("MeetingController");
+    this._storage = new Storage();
 
     this.meetingStartedInterval = setInterval(function (self: MeetingController) {
       self._logger.log(`Is meeting started: ${self.isMeetingStarted()}`)
@@ -143,15 +146,14 @@ export default class MeetingController {
         ])
       })
       
-      // send data to chrome.storage
-      const message = {
-        meetingId: self.meetingId,
-        startedAt: self.startedAt,
-        elapsedTime: formatTime(self.getTotalElapsedTime(), false),
-        participants: readableParticipants
-      };
-      chrome.storage.sync.set(message);
-      self._logger.log(message)
+      const meetingInfo = new MeetingInformation(
+        self.meetingId,
+        self.startedAt,
+        self.getTotalElapsedTime(),
+        readableParticipants
+      );
+
+      self._storage.set(meetingInfo);
     }, 1000, this)
   }
 

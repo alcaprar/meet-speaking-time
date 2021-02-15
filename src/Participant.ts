@@ -23,6 +23,11 @@ export class Participant {
     this.profileImageUrl = this.node.getImageProfileSrc() || "";
   }
 
+  getIdentifier () : string {
+    // TODO maybe find a mixed way with name also?
+    return this.initialId;
+  }
+
   /**
    * Returns the current total speaking time of the participant.
    * Please note that this might be more than totalSpeakingTime if the user is currenly speaking.
@@ -39,12 +44,13 @@ export class Participant {
     return this.totalSpeakingTime + liveSpeakingTime;
   }
 
-
-  startSpeaking () {
-    this.events.push(new ParticipantEvent(ParticipantEventEnum.START_SPEAKING))
-    const now = new Date().getTime();
-    this._logger.log(`[${this.initialId}][${now}]`)
-    this.lastStartSpeaking = now;
+  speaking () {
+    if (!this.lastStartSpeaking) {
+      this.events.push(new ParticipantEvent(ParticipantEventEnum.START_SPEAKING))
+      const now = new Date().getTime();
+      this._logger.log(`[${this.initialId}][${now}]`)
+      this.lastStartSpeaking = now;
+    }
   }
 
   /**
@@ -79,26 +85,22 @@ export class Participant {
     return !isSilence;
   }
 
-  startMicrophoneObserver () {
+  startObservers () {
     const self = this;
     this.microphoneObserver = new MutationObserver(function checkMicrophoneObserve (mutations) {
       const isSpeaking = self.isParticipantSpeaking();
       if (isSpeaking) {
-        // check if he keeps speaking or just started
-        const wasSilenceBefore = mutations.find((mut) => {
-          return mut.oldValue.includes(microphoneStatuses.silence);
-        })
-
-        if (wasSilenceBefore) {
-          // he just started speaking
-          self.startSpeaking()
-        }
+        self.speaking();
       } else {
-        self.stopSpeaking()
+        self.stopSpeaking();
       }
       self._logger.log(`[observer][${self.initialId}] class has changed.`, isSpeaking, mutations);
     });
 
-    this.microphoneObserver.observe(this.node.getMicrophoneElement(), { attributes: true, attributeOldValue: true })
+    this.microphoneObserver.observe(this.node.getMicrophoneElement(), { attributes: true, attributeOldValue: true })  
+  }
+
+  stopObservers () {
+    this.microphoneObserver.disconnect();
   }
 }

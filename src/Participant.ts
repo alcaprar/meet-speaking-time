@@ -24,6 +24,7 @@ export class Participant {
   }
 
   getIdentifier () : string {
+    // TODO maybe find a mixed way with name also?
     return this.initialId;
   }
 

@@ -89,16 +89,25 @@ export default class MeetingController {
     this.meetingId = this.getMeetingId();
 
     // observe for new participants
-    this.startParticipantsChangeObserver()
+    this.startParticipantsChangeObserver();
 
     // start tracking participants already present
+    this.loadCurrentParticipantBoxes();
+
+    setInterval(function reconciliateCurrentBoxesInterval (self : MeetingController) {
+      self.loadCurrentParticipantBoxes();
+    }, 500, this)
+
+    // this sends data to the popup
+    this.startSummaryLogger();
+  }
+
+  loadCurrentParticipantBoxes () {
     const participantsNodes = this.getParticipantsNodes()
 
     participantsNodes.forEach((node) => {
       this.onParticipantNodeAdded(node);
     })
-
-    this.startSummaryLogger();
   }
 
   startSummaryLogger() {

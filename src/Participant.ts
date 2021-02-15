@@ -43,12 +43,13 @@ export class Participant {
     return this.totalSpeakingTime + liveSpeakingTime;
   }
 
-
-  startSpeaking () {
-    this.events.push(new ParticipantEvent(ParticipantEventEnum.START_SPEAKING))
-    const now = new Date().getTime();
-    this._logger.log(`[${this.initialId}][${now}]`)
-    this.lastStartSpeaking = now;
+  speaking () {
+    if (!this.lastStartSpeaking) {
+      this.events.push(new ParticipantEvent(ParticipantEventEnum.START_SPEAKING))
+      const now = new Date().getTime();
+      this._logger.log(`[${this.initialId}][${now}]`)
+      this.lastStartSpeaking = now;
+    }
   }
 
   /**
@@ -83,33 +84,22 @@ export class Participant {
     return !isSilence;
   }
 
-  startMicrophoneObserver () {
+  startObservers () {
     const self = this;
     this.microphoneObserver = new MutationObserver(function checkMicrophoneObserve (mutations) {
       const isSpeaking = self.isParticipantSpeaking();
       if (isSpeaking) {
-        // check if he keeps speaking or just started
-        const wasSilenceBefore = mutations.find((mut) => {
-          return mut.oldValue.includes(microphoneStatuses.silence);
-        })
-
-        if (wasSilenceBefore || !self.lastStartSpeaking) {
-          self.startSpeaking()
-        }
+        self.speaking();
       } else {
-        self.stopSpeaking()
+        self.stopSpeaking();
       }
       self._logger.log(`[observer][${self.initialId}] class has changed.`, isSpeaking, mutations);
     });
 
-    this.microphoneObserver.observe(this.node.getMicrophoneElement(), { attributes: true, attributeOldValue: true })
-  }
-
-  startObservers () {
-    throw new Error("Not implemented");
+    this.microphoneObserver.observe(this.node.getMicrophoneElement(), { attributes: true, attributeOldValue: true })  
   }
 
   stopObservers () {
-    throw new Error("Not implemented");
+    this.microphoneObserver.disconnect();
   }
 }

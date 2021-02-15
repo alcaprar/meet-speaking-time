@@ -11,13 +11,10 @@ export default class MeetingController {
   startedAt: number;
   meetingId: string;
   _logger: Logger;
-  participants: {
-    [id: string]: Participant
-  };
-  participantsArray: Participant[]
+  participants: Participant[]
 
   constructor() {
-    this.participants = {}
+    this.participants = []
     this._logger = new Logger("MeetingController");
 
     this.meetingStartedInterval = setInterval(function (self: MeetingController) {
@@ -98,7 +95,7 @@ export default class MeetingController {
     const participantsNodes = this.getParticipantsNodes()
 
     participantsNodes.forEach((node) => {
-      this.createParticipant(node);
+      this.onParticipantNodeAdded(node);
     })
 
     this.startSummaryLogger();
@@ -113,13 +110,11 @@ export default class MeetingController {
       const participantsKeys = Object.keys(self.participants);
       let speakingTimeOfAllParticipants = 0;
 
-      participantsKeys.forEach((key) => {
-        const singleParticipant : Participant = self.participants[key];
+      self.participants.forEach((singleParticipant : Participant) => {
         speakingTimeOfAllParticipants = speakingTimeOfAllParticipants + singleParticipant.getTotalSpeakingTime();
       })
 
-      participantsKeys.forEach((key) => {
-        const singleParticipant : Participant = self.participants[key];
+      self.participants.forEach((singleParticipant : Participant) => {
         const percentageOfSpeaking = `${((singleParticipant.getTotalSpeakingTime() / speakingTimeOfAllParticipants)*100).toFixed(2)}%`;
 
         // add current speaking time next to participant's name
@@ -155,15 +150,15 @@ export default class MeetingController {
     // observe for participants changes
     const self = this;
     const participantsBoxObserver = new MutationObserver(function newParticipantObserver(mutations) {
-      self._logger.log('New participant box(es)', mutations);
+      self._logger.log('Changes in participant box(es)', mutations);
       mutations.forEach(function newParticipantObserverMutationsHandler(mut) {
         
         mut.addedNodes.forEach(function newParticipantObserverMutationsHandlerNodeHandler(node) {
-          self.createParticipant(node)
+          self.onParticipantNodeAdded(node);
         })
 
         mut.removedNodes.forEach(function participantNodeRemovedHandler (node) {
-          self.participantNodeRemoved(node);
+          self.onParticipantNodeRemoved(node);
         })
       })
     });
@@ -171,8 +166,8 @@ export default class MeetingController {
     participantsBoxObserver.observe(participantsContainerNode, { childList: true })
   }
 
-  participantNodeAdded (node) {
-    if (this.isPresentationNode(node)) return;
+  onParticipantNodeAdded (node) {
+    this._logger.log("Node added", node);
 
     const initialId = this.getParticipantInitialId(node);
 
@@ -180,52 +175,35 @@ export default class MeetingController {
       let participant = this.getParticipantByInitialId(initialId);
       
       if (!participant) {
-        participant = new Participant(initialId);
-        this.participantsArray.push(participant);
+        try {
+          participant = new Participant(initialId);
+        } catch {
+          // this normally happens with presentation boxes, just return and it is not added
+          return;
+        }
+
+        this.participants.push(participant);
       }
 
       participant.startObservers()
     }
   }
 
-  participantNodeRemoved (node) {
-    if (this.isPresentationNode(node)) return;
+  onParticipantNodeRemoved (node) {
+    this._logger.log("Node remomved", node);
 
     const initialId = this.getParticipantInitialId(node);
 
     if (initialId) {
       const participant = this.getParticipantByInitialId(initialId);
-      participant.stopObservers();
+      if (participant) participant.stopObservers();
     }
-  }
-
-  isPresentationNode (node) {
-    // TODO to be implemented
-    return false;
   }
 
   getParticipantByInitialId (initialId : string) : Participant {
-    return this.participantsArray.find((item) => {
+    return this.participants.find((item) => {
       return item.getIdentifier() == initialId;
     })
-  }
-
-  /**
-   * Create a Participant object and adds it to the global list.
-   * It then starts the microphone observer that tracks the speaking.
-   * @param node 
-   */
-  createParticipant(node) {
-    const participantId = this.getParticipantInitialId(node);
-    this._logger.log(`initialId is '${participantId}'`)
-
-    let part = this.participants[participantId]
-    if (!part) {
-      // if the user did not exist, create the participant and start the observer
-      part = new Participant(participantId);
-      this.participants[participantId] = part;
-      part.startMicrophoneObserver()
-    }
   }
 
   /**

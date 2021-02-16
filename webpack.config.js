@@ -8,7 +8,8 @@ module.exports = {
   devtool: 'inline-source-map',
   entry: {
     contentscript: join(__dirname, 'src/contentscript/contentscript.ts'),
-    background: join(__dirname, 'src/background/background.ts'),
+    globalcontentscript: join(__dirname, 'src/contentscript/globalcontentscript.ts'),
+    globalbackground: join(__dirname, 'src/background/globalbackground.ts'),
     popup: join(__dirname, 'src/popup/popup.ts')
   },
   output: {
@@ -39,3 +40,4 @@ module.exports = {
     extensions: ['.ts', '.js'],
   },
 };
+

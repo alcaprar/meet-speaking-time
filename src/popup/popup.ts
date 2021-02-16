@@ -17,7 +17,7 @@ setInterval(function (){
 
 function makeTableHTML(ar) {
   return `${ar.reduce((c, o) => c += `<div class="bg-white p-2 flex items-center rounded mt-1 border-b border-grey cursor-pointer hover:bg-gray-100">
-                                        <img src="${o[3]}" class="rounded-full mr-2" width="24px" heigth="24px" />
+                                        <img src="${o[3]}" class="rounded-full mr-2" width="24px" height="24px" />
                                         <div class="flex flex-col w-full">
                                           <span>${o[0]}</span>
                                           <div class="flex items-center justify-between">
@@ -31,3 +31,9 @@ function makeTableHTML(ar) {
 function formatParticipants (participants) : string {
   return makeTableHTML(participants);
 }
+
+document
+  .getElementById('create-meeting')
+  .addEventListener('click', function () {
+    chrome.runtime.sendMessage({ createMeeting: true })
+  });

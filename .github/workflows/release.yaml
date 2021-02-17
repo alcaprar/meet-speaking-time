@@ -27,7 +27,7 @@ jobs:
       with:
         # extension is only necessary when updating an existing addon,
         # omitting it will create a new addon
-        extension: hlndmhnhnmebmbjeidanifddoopokkgl
+        extension: lhnkmjolfffhgbihddcnmajlldgjmabn
         zip: dist.zip
         client-id: ${{ secrets.CHROME_CLIENT_ID }}
         client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}

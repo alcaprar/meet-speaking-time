@@ -99,7 +99,7 @@ export default class MeetingController {
 
     setInterval(function reconciliateCurrentBoxesInterval (self : MeetingController) {
       self.loadCurrentParticipantBoxes();
-    }, 500, this)
+    }, 5000, this)
 
     // this sends data to the popup
     this.startSummaryLogger();

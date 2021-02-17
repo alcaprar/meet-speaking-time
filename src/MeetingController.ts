@@ -186,12 +186,7 @@ export default class MeetingController {
       let participant = this.getParticipantByInitialId(initialId);
       
       if (!participant) {
-        try {
-          participant = new Participant(initialId);
-        } catch {
-          // this normally happens with presentation boxes, just return and it is not added
-          return;
-        }
+        participant = new Participant(initialId);
 
         this.participants.push(participant);
       }

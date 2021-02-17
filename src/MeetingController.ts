@@ -127,7 +127,7 @@ export default class MeetingController {
       })
 
       self.participants.forEach((singleParticipant : Participant) => {
-        const percentageOfSpeaking = `${((singleParticipant.getTotalSpeakingTime() / speakingTimeOfAllParticipants)*100).toFixed(2)}%`;
+        const percentageOfSpeaking = `${(speakingTimeOfAllParticipants !== 0 ? (singleParticipant.getTotalSpeakingTime() / speakingTimeOfAllParticipants)*100 : 0).toFixed(2)}%`;
 
         // add current speaking time next to participant's name
         const participantsInformation = document.querySelectorAll(`div[jscontroller="${jsControllerCodes.participantInformationBar}"]`);

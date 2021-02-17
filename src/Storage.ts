@@ -65,6 +65,8 @@ export class Storage {
     chrome.storage.local.get([this.historyKey], function (result) {
       let historyObject = result[self.historyKey] || {};
 
+      if (Array.isArray(historyObject)) historyObject = {};
+      
       const meetingKey = `${meetingInformation.meetingId}|${meetingInformation.startedAt}`;
       
       historyObject[meetingKey] = meetingInformation;

@@ -79,25 +79,29 @@ export class Participant {
    * Checks if the participant is currently speaking looking at the CSS classes of the wave.
    */
   isParticipantSpeaking () : boolean {
-    const nodeClass = this.node.getMicrophoneElement().className;
+    const microphoneNode = this.node.getMicrophoneElement() || null;
+    const nodeClass = microphoneNode ? microphoneNode.className : "";
     const isSilence = nodeClass.includes(microphoneStatuses.silence)
-    this._logger.log(`isSilence='${isSilence}' nodeClass=${nodeClass}`)
+    this._logger.log(`nodeClass=${nodeClass} isSilence='${isSilence}'`, microphoneNode)
     return !isSilence;
   }
 
   startObservers () {
     const self = this;
-    this.microphoneObserver = new MutationObserver(function checkMicrophoneObserve (mutations) {
-      const isSpeaking = self.isParticipantSpeaking();
-      if (isSpeaking) {
-        self.speaking();
-      } else {
-        self.stopSpeaking();
-      }
-      self._logger.log(`[observer][${self.initialId}] class has changed.`, isSpeaking, mutations);
-    });
+    const microphoneElement = this.node.getMicrophoneElement();
+    if (microphoneElement) {
+      this.microphoneObserver = new MutationObserver(function checkMicrophoneObserve (mutations) {
+        const isSpeaking = self.isParticipantSpeaking();
+        if (isSpeaking) {
+          self.speaking();
+        } else {
+          self.stopSpeaking();
+        }
+        self._logger.log(`[observer][${self.initialId}] class has changed.`, isSpeaking, mutations);
+      }); 
 
-    this.microphoneObserver.observe(this.node.getMicrophoneElement(), { attributes: true, attributeOldValue: true })  
+      this.microphoneObserver.observe(microphoneElement, { attributes: true, attributeOldValue: true })
+    } 
   }
 
   stopObservers () {

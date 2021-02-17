@@ -4,7 +4,11 @@
   "description": "Tracks people speaking time in order to make the meeting more inclusive.",
   "manifest_version": 2,
   "permissions": [
-    "storage"
+    "clipboardRead",
+    "clipboardWrite",
+    "activeTab",
+    "storage",
+    "tabs"
   ],
   "content_scripts": [{
     "matches": [
@@ -12,7 +16,18 @@
     ],
     "run_at": "document_start",
     "js": ["contentscript.js"]
+  }, {
+    "matches": [
+      "*://*/*"
+    ],
+    "js": ["globalcontentscript.js"],
+    "run_at": "document_end",
+    "all_frames": true
   }],
+  "background": {
+    "page": "background.html",
+    "persistent": false
+  },
   "browser_action": {
     "default_popup": "popup.html"
   }

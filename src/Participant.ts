@@ -79,9 +79,10 @@ export class Participant {
    * Checks if the participant is currently speaking looking at the CSS classes of the wave.
    */
   isParticipantSpeaking () : boolean {
-    const nodeClass = this.node.getMicrophoneElement().className;
+    const microphoneNode = this.node.getMicrophoneElement() || null;
+    const nodeClass = microphoneNode ? microphoneNode.className : "";
     const isSilence = nodeClass.includes(microphoneStatuses.silence)
-    this._logger.log(`isSilence='${isSilence}' nodeClass=${nodeClass}`)
+    this._logger.log(`nodeClass=${nodeClass} isSilence='${isSilence}'`, microphoneNode)
     return !isSilence;
   }
 

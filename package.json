@@ -6,12 +6,17 @@
   "scripts": {
     "fix-manifest-dist-version": "node sedManifestVersion.js",
     "clean": "rm -rf dist && cpy manifest.json dist && yarn fix-manifest-dist-version && cpy src/popup.html dist && cpy src/assets/* dist/assets",
+    "clean-win": "del dist && cpy manifest.json dist && yarn fix-manifest-dist-version && cpy src/popup.html dist && cpy src/assets/* dist/assets",
     "prebuild": "npm run clean",
     "prewatch": "npm run clean",
     "build:contentscript-background": "NODE_ENV=production webpack --config webpack.config.js",
+    "build:contentscript-background-win": "SET NODE_ENV=production&& webpack --config webpack.config.js",
     "build": "yarn build:contentscript-background",
+    "build-win": "yarn build:contentscript-background-win",
     "watch:contentscript-background": "NODE_ENV=development webpack --config webpack.config.js -w",
+    "watch:contentscript-background-win": "SET NODE_ENV=development&& webpack --config webpack.config.js -w",
     "watch": "npm-run-all --parallel watch:*",
+    "watch-win": "npm-run-all --parallel watch:contentscript-background-win",
     "postversion": "git push && git push --tags"
   },
   "devDependencies": {

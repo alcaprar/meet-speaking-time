@@ -4,7 +4,6 @@
   "description": "Tracks people speaking time in order to make the meeting more inclusive.",
   "manifest_version": 2,
   "permissions": [
-    "clipboardRead",
     "clipboardWrite",
     "activeTab",
     "storage",

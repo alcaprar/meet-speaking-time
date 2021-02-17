@@ -4,11 +4,14 @@
 
 Prerequisites:
 - node
+- yarn
+- npm
 
 If you want to develop this extension locally, you need to:
 - clone this repo
 - install dependencies: `yarn install`
-- run `yarn watch`
+- run `yarn watch` for unix
+- run `yarn watch-win` for windows
 
 This will create a dist folder that you can load as a `Unpacked extension` in your chrome: https://developer.chrome.com/docs/extensions/mv2/getstarted/#manifest.
 

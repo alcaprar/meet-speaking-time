@@ -99,7 +99,7 @@ export default class MeetingController {
 
     setInterval(function reconciliateCurrentBoxesInterval (self : MeetingController) {
       self.loadCurrentParticipantBoxes();
-    }, 500, this)
+    }, 5000, this)
 
     // this sends data to the popup
     this.startSummaryLogger();
@@ -186,12 +186,7 @@ export default class MeetingController {
       let participant = this.getParticipantByInitialId(initialId);
       
       if (!participant) {
-        try {
-          participant = new Participant(initialId);
-        } catch {
-          // this normally happens with presentation boxes, just return and it is not added
-          return;
-        }
+        participant = new Participant(initialId);
 
         this.participants.push(participant);
       }

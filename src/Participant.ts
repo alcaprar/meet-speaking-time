@@ -87,17 +87,20 @@ export class Participant {
 
   startObservers () {
     const self = this;
-    this.microphoneObserver = new MutationObserver(function checkMicrophoneObserve (mutations) {
-      const isSpeaking = self.isParticipantSpeaking();
-      if (isSpeaking) {
-        self.speaking();
-      } else {
-        self.stopSpeaking();
-      }
-      self._logger.log(`[observer][${self.initialId}] class has changed.`, isSpeaking, mutations);
-    });
+    const microphoneElement = this.node.getMicrophoneElement();
+    if (microphoneElement) {
+      this.microphoneObserver = new MutationObserver(function checkMicrophoneObserve (mutations) {
+        const isSpeaking = self.isParticipantSpeaking();
+        if (isSpeaking) {
+          self.speaking();
+        } else {
+          self.stopSpeaking();
+        }
+        self._logger.log(`[observer][${self.initialId}] class has changed.`, isSpeaking, mutations);
+      }); 
 
-    this.microphoneObserver.observe(this.node.getMicrophoneElement(), { attributes: true, attributeOldValue: true })  
+      this.microphoneObserver.observe(microphoneElement, { attributes: true, attributeOldValue: true })
+    } 
   }
 
   stopObservers () {

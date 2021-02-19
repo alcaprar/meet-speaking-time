@@ -33,5 +33,8 @@ new Vue({
       })
       // TODO there should be also the history object
     },
+    openOption () {
+      chrome.runtime.openOptionsPage();
+    },
   }
 })

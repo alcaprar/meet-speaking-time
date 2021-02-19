@@ -7,7 +7,7 @@ let retryTimes = 10
 
 let intervalToJoinFunc = function (tab) {
   chrome.tabs.sendMessage(tab.id, { join: true }, function (resJoin) {
-    if (resJoin.status) {
+    if (resJoin && resJoin.status) {
       clearInterval(intervalToJoin)
       intervalSetEnvironment = setInterval(intervalSetEnvironmentFunc.bind(null, tab), 500)
     }
@@ -17,7 +17,7 @@ let intervalToJoinFunc = function (tab) {
 let intervalSetEnvironmentFunc = function (tab) {
   chrome.tabs.sendMessage(tab.id, { setEnvironment: true }, function (resEnv) {
     // dunno y but return false even when is true!
-    if (resEnv.status || retryTimes === 0) {
+    if (resEnv && resEnv.status || retryTimes === 0) {
       retryTimes = 10
       clearInterval(intervalSetEnvironment)
     } else {
@@ -28,7 +28,7 @@ let intervalSetEnvironmentFunc = function (tab) {
 
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
-    if (request.createMeeting) {
+    if (request && request.createMeeting) {
       chrome.tabs.query({active: true, lastFocusedWindow: true}, function (tabs) {
         tabIndex = tabs[0].index
       });

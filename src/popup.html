@@ -1,45 +1,49 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://pagecdn.io/lib/font-awesome/5.10.0-11/css/all.min.css" integrity="sha256-p9TTWD+813MlLaxMXMbTA7wN/ArzGyW/L7c5+KkjOkM=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css">
+    <script src="https://unpkg.com/vue@2.6.12/dist/vue.js"></script>
   </head>
   <body>
-    <div class="bg-blue-400 w-full p-4 flex justify-center font-sans">
-      <div class="rounded bg-gray-200 w-64 p-2">
-        <div class="flex justify-between py-1">
-          <h3 class="text-sm">
-            Time tracker
-          </h3>
-          <div id="create-meeting" class="flex items-center cursor-pointer">
-            <span class="mr-2">Add new</span>
-            <svg class="h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 87.5 72">
-              <path fill="#00832d" d="M49.5 36l8.53 9.75 11.47 7.33 2-17.02-2-16.64-11.69 6.44z"/>
-              <path fill="#0066da" d="M0 51.5V66c0 3.315 2.685 6 6 6h14.5l3-10.96-3-9.54-9.95-3z"/>
-              <path fill="#e94235" d="M20.5 0L0 20.5l10.55 3 9.95-3 2.95-9.41z"/>
-              <path fill="#2684fc" d="M20.5 20.5H0v31h20.5z"/>
-              <path fill="#00ac47" d="M82.6 8.68L69.5 19.42v33.66l13.16 10.79c1.97 1.54 4.85.135 4.85-2.37V11c0-2.535-2.945-3.925-4.91-2.32zM49.5 36v15.5h-29V72h43c3.315 0 6-2.685 6-6V53.08z"/>
-              <path fill="#ffba00" d="M63.5 0h-43v20.5h29V36l20-16.57V6c0-3.315-2.685-6-6-6z"/>
-            </svg>
-          </div>
-        </div>
-        <div class="text-sm mt-2">
-          <div id="table">
-            <div class="w-full h-24 flex align-center py-4 bg-white opacity-75 z-50">
-              <span class="text-green-500 opacity-75 my-0 mx-auto">
-                <i class="fas fa-circle-notch fa-spin fa-5x"></i>
-              </span>
+    <div id="app">
+      <div class="bg-blue-400 w-full p-4 flex justify-center font-sans">
+        <div class="rounded bg-gray-200 w-64 p-2">
+          <div class="flex justify-between py-1">
+            <h3 class="text-sm">
+              Time tracker
+            </h3>
+            <div id="create-meeting" @click="createMeeting" class="flex items-center cursor-pointer">
+              <span class="mr-2">Add new</span>
+              <svg class="h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 87.5 72">
+                <path fill="#00832d" d="M49.5 36l8.53 9.75 11.47 7.33 2-17.02-2-16.64-11.69 6.44z"/>
+                <path fill="#0066da" d="M0 51.5V66c0 3.315 2.685 6 6 6h14.5l3-10.96-3-9.54-9.95-3z"/>
+                <path fill="#e94235" d="M20.5 0L0 20.5l10.55 3 9.95-3 2.95-9.41z"/>
+                <path fill="#2684fc" d="M20.5 20.5H0v31h20.5z"/>
+                <path fill="#00ac47" d="M82.6 8.68L69.5 19.42v33.66l13.16 10.79c1.97 1.54 4.85.135 4.85-2.37V11c0-2.535-2.945-3.925-4.91-2.32zM49.5 36v15.5h-29V72h43c3.315 0 6-2.685 6-6V53.08z"/>
+                <path fill="#ffba00" d="M63.5 0h-43v20.5h29V36l20-16.57V6c0-3.315-2.685-6-6-6z"/>
+              </svg>
             </div>
           </div>
-          <p class="mt-3 text-gray-700">
-            Meeting duration: <span id="totalTime">00:00:00</span>
-          </p>
+          <div class="text-sm mt-2">
+            <div id="table">
+              <div v-for="(p, i) in participants" :key="`participant-${i}`" class="bg-white p-2 flex items-center rounded mt-1 border-b border-grey cursor-pointer hover:bg-gray-100">
+                 <img :src="p[3]" class="rounded-full mr-2" width="24px" height="24px" />
+                 <div class="flex flex-col w-full">
+                   <span>{{ p[0] }}</span>
+                   <div class="flex items-center justify-between">
+                     <span>{{ p[1] }}</span>
+                     <span>{{ p[2] }}</span>
+                   </div>
+                 </div>
+              </div>
+            </div>
+            <p class="mt-3 text-gray-700">
+              Meeting duration: <span id="totalTime">{{ elapsed }}</span>
+            </p>
+          </div>
         </div>
       </div>
     </div>
   </body>
-
-  <script src="./popup.js">
-
-  </script>
+  <script src="./popup.js"></script>
 </html>

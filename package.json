@@ -5,8 +5,8 @@
   "license": "MIT",
   "scripts": {
     "fix-manifest-dist-version": "node sedManifestVersion.js",
-    "clean": "rm -rf dist && cpy manifest.json dist && yarn fix-manifest-dist-version && cpy src/popup.html dist && cpy src/background.html dist && cpy src/assets/* dist/assets",
-    "clean-win": "del dist && cpy manifest.json dist && yarn fix-manifest-dist-version && cpy src/popup.html dist && cpy src/background.html dist && cpy src/assets/* dist/assets",
+    "clean": "rm -rf dist && cpy manifest.json dist && yarn fix-manifest-dist-version && cpy src/popup.html dist && cpy src/img dist/img && cpy src/background.html dist && cpy src/assets/* dist/assets",
+    "clean-win": "del dist && cpy manifest.json dist && yarn fix-manifest-dist-version && cpy src/popup.html dist && && cpy src/img dist/img cpy src/background.html dist && cpy src/assets/* dist/assets",
     "prebuild": "npm run clean",
     "prewatch": "npm run clean",
     "build:contentscript-background": "NODE_ENV=production webpack --config webpack.config.js",

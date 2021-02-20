@@ -216,48 +216,46 @@
         </header>
 
         <main class="flex-1 overflow-x-hidden overflow-y-auto">
-          <template v-for="(month, i) in history" :key="i">
+          <div v-for="(month, i) in history" :key="`month-${i}`">
             <div class="px-10 py-2 mt-1">
               <span class="text-gray-500 font-semibold">
-                {{ i }}
+                {{ getMonth(month.month) }} <b>{{ getTotalMeetingTimeMonth(month.month) }}</b>
               </span>
             </div>
-            <template v-for="(day, d) in month" :key="d">
+            <div v-for="(day, d) in month.days" :key="d">
               <div class="px-10 py-2 mt-1">
                 <span class="text-gray-500 font-semibold">
-                  {{ d }}
+                  {{ getDay(d) }} <b>{{ getTotalMeetingTimeDay(month.month, d) }}</b>
                 </span>
               </div>
-              <template v-for="(meet, m) in day" :key="m">
+              <div v-for="(meet, m) in day" :key="m">
                 <div class="container mx-auto w-full px-6 -mb-2">
-                <div class="mt-4 flex px-4 py-4 justify-between bg-white dark:bg-gray-600 shadow-sm rounded-lg cursor-pointer">
-                  <div class="flex justify-center">
-                    <div class="px-2 flex flex-col capitalize text-gray-600">
-                      <span class="font-bold text-md">{{ meet.meetingId }}</span>
-                      <span class="mt-1 text-gray-400 text-sm font-semibold">
-                        {{ meet.elapsedTime }}
-                      </span>
-                    </div>
-                  </div>
-                  <div class="flex pr-8">
-                    <div class="ml-4 pt-2 flex flex-col capitalize text-gray-600">
-                      <div>
-                          <span class="mt-2 flex">
-                            <img v-for="part in meet.participants" :key="part.image" :src="part.image" class="inline-block h-8 w-10 rounded-full ring-2 ring-white" />
-                          </span>
+                  <div class="mt-4 flex px-4 py-4 justify-between bg-white dark:bg-gray-600 shadow-sm rounded-lg cursor-pointer">
+                    <div class="flex justify-center">
+                      <div class="px-2 flex flex-col capitalize text-gray-600">
+                        <span class="font-bold text-md">{{ meet.meetingId }}</span>
+                        <span class="mt-1 text-gray-400 text-sm font-semibold">
+                      {{ meet.elapsedTime }}
+                    </span>
                       </div>
                     </div>
-                    <!--<div class="ml-16 pt-3 flex flex-col capitalize text-gray-600 dark:text-gray-400">
-                      <p>
-                        <span class="font-bold">New Chili piper license - </span>Hey Schott, have you lorem ipsum dolor sit amet
-                      </p>
-                    </div>-->
+                    <div class="flex pr-8">
+                      <div class="ml-4 pt-2 flex flex-col capitalize text-gray-600">
+                        <div class="flex -space-x-2 ml-2 overflow-hidden inline-flex">
+                          <img v-for="(part, p) in meet.participants" :key="part.image + d + meet.meetingId + p" :src="part.image" class="inline-block h-8 w-8 rounded-full ring-2 ring-white">
+                        </div>
+                      </div>
+                      <!--<div class="ml-16 pt-3 flex flex-col capitalize text-gray-600 dark:text-gray-400">
+                        <p>
+                          <span class="font-bold">New Chili piper license - </span>Hey Schott, have you lorem ipsum dolor sit amet
+                        </p>
+                      </div>-->
+                    </div>
                   </div>
                 </div>
-               </div>
-              </template>
-            </template>
-          </template>
+             </div>
+            </div>
+          </div>
         </main>
       </div>
     </div>

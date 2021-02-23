@@ -36,7 +36,7 @@ export class ParticipantNode {
   }
 
   getImageProfileSrc () : string {
-    return this.getImageProfileElement().getAttribute("src") || "";
+    return this.getImageProfileElement() ? this.getImageProfileElement().getAttribute("src") : "";
   }
   
 }

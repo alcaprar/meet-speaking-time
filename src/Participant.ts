@@ -28,6 +28,10 @@ export class Participant {
     return this.initialId;
   }
 
+  isPresentationBox () : Boolean {
+    return this.name == "" && this.profileImageUrl == "";
+  }
+
   /**
    * Returns the current total speaking time of the participant.
    * Please note that this might be more than totalSpeakingTime if the user is currenly speaking.

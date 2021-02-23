@@ -179,19 +179,27 @@ export default class MeetingController {
 
   onParticipantNodeAdded (node) {
     this._logger.log("Node added", node);
+    if (this.isPresentationNode(node)) return;
 
     const initialId = this.getParticipantInitialId(node);
+    this._logger.log("Initial id", initialId);
 
     if (initialId) {
       let participant = this.getParticipantByInitialId(initialId);
       
       if (!participant) {
         participant = new Participant(initialId);
-
-        this.participants.push(participant);
+        
+        if (!participant.isPresentationBox()) {
+          this.participants.push(participant);
+          participant.startObservers()
+          this._logger.log("Participant added", initialId, participant)
+        } else {
+          this._logger.log("Participant is a presentation box")
+        }
+      } {
+        this._logger.log("Participant already exists", initialId, participant)
       }
-
-      participant.startObservers()
     }
   }
 
@@ -204,6 +212,11 @@ export default class MeetingController {
       const participant = this.getParticipantByInitialId(initialId);
       if (participant) participant.stopObservers();
     }
+  }
+
+  isPresentationNode (node) : Boolean {
+    // TODO understand how to do this
+    return false;
   }
 
   getParticipantByInitialId (initialId : string) : Participant {

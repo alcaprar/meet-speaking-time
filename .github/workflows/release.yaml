@@ -27,7 +27,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ github.token }}
       with:
-        asset_paths: '["dist.zip"]'
+        asset_paths: '["./dist.zip"]'
     - name: Publish to chrome store
       uses: trmcnvn/chrome-addon@v2
       with:

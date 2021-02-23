@@ -22,12 +22,6 @@ jobs:
       with:
         files: dist/
         dest: dist.zip
-    - name: Upload release binaries
-      uses: alexellis/upload-assets@0.2.2
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
-      with:
-        asset_paths: '["./dist.zip"]'
     - name: Publish to chrome store
       uses: trmcnvn/chrome-addon@v2
       with:

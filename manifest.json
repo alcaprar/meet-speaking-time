@@ -30,5 +30,6 @@
   "browser_action": {
     "default_popup": "popup.html"
   },
+  "options_page": "options.html",
   "content_security_policy": "style-src 'self' 'unsafe-inline' https://unpkg.com;script-src 'self' 'unsafe-eval' https://unpkg.com; object-src 'self' ;"
 }

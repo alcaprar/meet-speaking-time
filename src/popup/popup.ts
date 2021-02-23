@@ -8,7 +8,6 @@ new Vue({
     return {
       participants: [],
       elapsed: null,
-      _data: null,
     }
   },
   mounted () {
@@ -16,8 +15,6 @@ new Vue({
     setInterval(() => {
       _self.updateView()
     }, 1000)
-  },
-  computed: {
   },
   methods: {
     async createMeeting () {
@@ -29,9 +26,11 @@ new Vue({
       storage.getCurrent(function (currentMeeting: MeetingInformation) {
         _self.participants = currentMeeting.participants
         _self.elapsed = formatTime(currentMeeting.elapsed, false)
-        _self._data = currentMeeting
       })
       // TODO there should be also the history object
+    },
+    openOption () {
+      chrome.runtime.openOptionsPage();
     },
   }
 })

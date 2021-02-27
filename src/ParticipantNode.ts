@@ -20,11 +20,11 @@ export class ParticipantNode {
   }
 
   getMicrophoneElement () : Element {
-    return this.getMainElement().querySelector(`${this.microphoneQuerySelector}`);
+    return this.getMainElement() ? this.getMainElement().querySelector(`${this.microphoneQuerySelector}`) : null;
   }
 
   getNameElement (): Element {
-    return this.getMainElement().querySelector(`${this.nameNodeQuerySelector}`);
+    return this.getMainElement() ? this.getMainElement().querySelector(`${this.nameNodeQuerySelector}`) : null;
   }
 
   getName () : string {
@@ -32,7 +32,7 @@ export class ParticipantNode {
   }
 
   getImageProfileElement () : Element {
-    return this.getMainElement().querySelector(`${this.imageProfileNodeQuerySelector}`);
+    return this.getMainElement() ? this.getMainElement().querySelector(`${this.imageProfileNodeQuerySelector}`) : null;
   }
 
   getImageProfileSrc () : string {

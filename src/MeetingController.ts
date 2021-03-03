@@ -1,5 +1,5 @@
 import Logger from './Logger'
-import { jsControllerCodes, microphoneStatuses } from './constants'
+import { jsControllerCodes, microphoneStatuses, meetUiString } from './constants'
 import { Participant } from './Participant'
 import { formatTime } from './Utils'
 import { MeetingInformation, Storage } from "./Storage"
@@ -214,9 +214,18 @@ export default class MeetingController {
     }
   }
 
+  getMeetUiStrings () {
+    let lang = document.documentElement.lang.split( '-' )[ 0 ]||'en';
+    if( !meetUiString[ lang ] ) lang = 'en';
+    return meetUiString[ lang ];
+  }
+
   isPresentationNode (node) : Boolean {
     // TODO understand how to do this
-    return false;
+    const innerHTML = node.innerHTML;
+    const isPresentation =  innerHTML.indexOf(this.getMeetUiStrings().presenting) != -1 ||  innerHTML.indexOf(this.getMeetUiStrings().presentation) != -1
+    this._logger.log(node, isPresentation, this.getMeetUiStrings())
+    return isPresentation;
   }
 
   getParticipantByInitialId (initialId : string) : Participant {

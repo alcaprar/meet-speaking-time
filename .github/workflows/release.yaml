@@ -22,6 +22,11 @@ jobs:
       with:
         files: dist/
         dest: dist.zip
+    - name: Archive dist
+      uses: actions/upload-artifact@v2
+      with:
+        name: dist
+        path: dist.zip
     - name: Publish to chrome store
       uses: trmcnvn/chrome-addon@v2
       with:

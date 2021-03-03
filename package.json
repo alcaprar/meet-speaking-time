@@ -1,6 +1,6 @@
 {
   "name": "meet-speaking-time-tracker",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "main": "index.js",
   "license": "MIT",
   "scripts": {

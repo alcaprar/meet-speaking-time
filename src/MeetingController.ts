@@ -137,14 +137,20 @@ export default class MeetingController {
           }
         }
 
+
         // prepare data to be sent to chrome.storage
         readableParticipants.push([
           singleParticipant.name,
           formatTime(singleParticipant.getTotalSpeakingTime(), false),
           percentageOfSpeaking,
-          singleParticipant.profileImageUrl
+          singleParticipant.profileImageUrl,
+          singleParticipant.getTotalSpeakingTime()
         ])
       })
+
+      readableParticipants.sort((a, b) => {
+        return b[4] - a[4];
+      });
       
       const meetingInfo = new MeetingInformation(
         self.meetingId,

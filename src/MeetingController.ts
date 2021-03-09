@@ -186,20 +186,23 @@ export default class MeetingController {
 
     if (initialId) {
       let participant = this.getParticipantByInitialId(initialId);
-      
+
       if (!participant) {
+        this._logger.log("Participant did not exist", initialId)
         participant = new Participant(initialId);
-        
+
         if (!participant.isPresentationBox()) {
           this.participants.push(participant);
-          participant.startObservers()
           this._logger.log("Participant added", initialId, participant)
         } else {
           this._logger.log("Participant is a presentation box")
         }
-      } {
-        this._logger.log("Participant already exists", initialId, participant)
+      } else {
+        this._logger.log("Participant already exists", initialId)
       }
+      this._logger.log("Participant", participant)
+
+      participant.startObservers()
     }
   }
 

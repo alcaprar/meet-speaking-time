@@ -2,6 +2,7 @@ import { microphoneStatuses} from './constants'
 import Logger from './Logger'
 import { ParticipantEvent, ParticipantEventEnum} from "./ParticipantEvent";
 import { ParticipantNode } from './ParticipantNode'
+import config from './config'
 
 export class Participant {
   initialId: string;
@@ -17,7 +18,7 @@ export class Participant {
   constructor (initialId: string) {
     this.initialId = initialId;
     this.node = new ParticipantNode(initialId);
-    this.events.push(new ParticipantEvent(ParticipantEventEnum.JOINED));
+    if (config.PersistEvents) this.events.push(new ParticipantEvent(ParticipantEventEnum.JOINED));
     this._logger = new Logger(`Participant|${initialId}`);
     this.name = this.node.getName() || "";
     this.profileImageUrl = this.node.getImageProfileSrc() || "";
@@ -50,7 +51,7 @@ export class Participant {
 
   speaking () {
     if (!this.lastStartSpeaking) {
-      this.events.push(new ParticipantEvent(ParticipantEventEnum.START_SPEAKING))
+      if(config.PersistEvents) this.events.push(new ParticipantEvent(ParticipantEventEnum.START_SPEAKING))
       const now = new Date().getTime();
       this._logger.log(`[${this.initialId}][${now}]`)
       this.lastStartSpeaking = now;
@@ -61,7 +62,7 @@ export class Participant {
    * Calculate the speaking time since he/she has last started and adds it to the toal.
    */
   stopSpeaking () {
-    this.events.push(new ParticipantEvent(ParticipantEventEnum.STOP_SPEAKING))
+    if (config.PersistEvents) this.events.push(new ParticipantEvent(ParticipantEventEnum.STOP_SPEAKING))
     const now = new Date().getTime();
     this._logger.log(`[${this.initialId}][${now}]`)
 

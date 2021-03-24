@@ -1,3 +1,3 @@
 export default {
-  PersistEvents: false
-}
+  PersistEvents: false,
+};

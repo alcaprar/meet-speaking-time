@@ -2,7 +2,7 @@ export class ParticipantEvent {
   event: ParticipantEventEnum;
   datetime: number;
 
-  constructor (eventType : ParticipantEventEnum) {
+  constructor(eventType: ParticipantEventEnum) {
     this.event = eventType;
     this.datetime = new Date().getTime();
   }
@@ -11,5 +11,5 @@ export class ParticipantEvent {
 export enum ParticipantEventEnum {
   JOINED,
   START_SPEAKING,
-  STOP_SPEAKING
+  STOP_SPEAKING,
 }

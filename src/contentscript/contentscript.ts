@@ -1,3 +1,3 @@
-import MeetingController from '../MeetingController'
+import MeetingController from '../MeetingController';
 
 new MeetingController();

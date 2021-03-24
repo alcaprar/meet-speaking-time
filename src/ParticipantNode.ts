@@ -9,7 +9,11 @@ export class ParticipantNode {
 
   constructor(initialId: string) {
     this.initialId = initialId;
-    this.mainNodeQuerySelector = `div[jscontroller="${jsControllerCodes.participantBox}"][data-initial-participant-id="${this.initialId}"]`;
+    if (initialId === 'you'){
+      this.mainNodeQuerySelector = `div[jscontroller="${jsControllerCodes.yourBoxTopRight}"]`;
+    } else {
+      this.mainNodeQuerySelector = `div[jscontroller="${jsControllerCodes.participantBox}"][data-initial-participant-id="${this.initialId}"]`;
+    }
     this.microphoneQuerySelector = `div[jscontroller="${jsControllerCodes.microphoneBox}"]`;
     this.nameNodeQuerySelector = `div[jscontroller="${jsControllerCodes.participantNameBox}"]`;
     this.imageProfileNodeQuerySelector = `img[jscontroller="${jsControllerCodes.imageProfile}"]`;

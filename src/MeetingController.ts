@@ -74,6 +74,12 @@ export default class MeetingController {
     );
   }
 
+  getYourParticipantNode(): Element {
+    return document.querySelector(
+      `div[jscontroller="${jsControllerCodes.yourBoxTopRight}"]`,
+    );
+  }
+
   /**
    * Returns the main box of the meeting that contains all the participants.
    */
@@ -106,6 +112,8 @@ export default class MeetingController {
     // observe for new participants
     this.startParticipantsChangeObserver();
 
+    this.loadYourParticipantBox();
+
     // start tracking participants already present
     this.loadCurrentParticipantBoxes();
 
@@ -119,6 +127,12 @@ export default class MeetingController {
 
     // this sends data to the popup
     this.startSummaryLogger();
+  }
+
+  loadYourParticipantBox (): void {
+    const yourNode = <HTMLElement> this.getYourParticipantNode();
+
+    this.onParticipantNodeAdded(yourNode, true);
   }
 
   loadCurrentParticipantBoxes(): void {
@@ -216,11 +230,11 @@ export default class MeetingController {
     });
   }
 
-  onParticipantNodeAdded(node: HTMLElement): void {
+  onParticipantNodeAdded(node: HTMLElement, isYourBox = false): void {
     this._logger.log('Node added', node);
     if (this.isPresentationNode(node)) return;
 
-    const initialId = this.getParticipantInitialId(node);
+    const initialId = !isYourBox ? this.getParticipantInitialId(node) : 'you';
     this._logger.log('Initial id', initialId);
 
     if (initialId) {

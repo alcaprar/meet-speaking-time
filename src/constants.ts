@@ -1,6 +1,7 @@
 export enum jsControllerCodes {
-  participantsContainerBox = 'MJfjyf', // all the participants box divs are inside this
-  participantBox = 'J3CtX',
+  // all the participants box divs are inside this
+  participantsContainerBox = 'gJYtNe', // 'MJfjyf' in previous versions
+  participantBox = 'J3CtX', // was 'HTP19d' in previous versions
   participantNameBox = 'GQnsGd',
   microphoneBox = 'ES310d',
   timeMeetingBox = 'ymEVmc',

@@ -151,7 +151,7 @@ export default class MeetingController {
                 speakingTimeOfAllParticipants) *
               100
             : 0
-          ).toFixed(2)}%`;
+          ).toFixed(1)}%`;
 
           // add current speaking time next to participant's name
           const participantsInformation = document.querySelectorAll(
@@ -159,10 +159,11 @@ export default class MeetingController {
           );
           for (const participant of participantsInformation as any) {
             if (participant.innerHTML.includes(singleParticipant.name)) {
-              participant.innerHTML = `${singleParticipant.name} (${formatTime(
+              participant.innerHTML = `${singleParticipant.name}
+              <br/><small>(${formatTime(
                 singleParticipant.getTotalSpeakingTime(),
                 false,
-              )} - ${percentageOfSpeaking})`;
+              )} - ${percentageOfSpeaking})</small>`;
             }
           }
 

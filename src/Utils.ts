@@ -9,10 +9,27 @@ export function formatTime(ms: number, showMilliseconds = true): string {
   const minutes = Math.floor((ms / (60 * 1000)) % 60);
   const hours = Math.floor((ms / (3600 * 1000)) % 3600);
 
-  const formattedHours = hours < 10 ? '0' + hours : hours;
-  const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
-  const formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
-  return `${formattedHours}:${formattedMinutes}:${formattedSeconds}${
-    showMilliseconds ? `.${milliseconds}` : ''
-  }`;
+  let timeStr = '';
+  if (hours) {
+    timeStr += `${hours}:`;
+  }
+  if (timeStr !== '' || minutes) {
+    if (timeStr) {
+      timeStr += minutes < 10 ? '0' + minutes : minutes;
+    } else {
+      timeStr += minutes;
+    }
+    timeStr += ':';
+  }
+  if (timeStr !== '' || seconds) {
+    if (timeStr) {
+      timeStr += seconds < 10 ? '0' + seconds : seconds;
+    } else {
+      timeStr += seconds;
+    }
+  }
+  if (showMilliseconds) {
+    timeStr += `.${milliseconds}`;
+  }
+  return timeStr;
 }
